@@ -18,6 +18,10 @@ CLIENT_SECRET = '83bae44d26f34a7a815e056216b7b5d7'
 
 FPS = 30
 
+FONT_SIZE = 40
+
+NO_TEXT = "\n\n\n\n\n\n\n\nWelcome to ProjectX 2.0"
+
 def get_lines_of_str(string: str) -> int:
     try:
         return string.count('\n')
@@ -60,7 +64,7 @@ def get_songtext(song_name: str):
         return text
     except:
         print(f"Can't scrape text for {song_name}")
-        return(':D')
+        return(NO_TEXT)
     
 
 class SpotifyApi:
@@ -134,9 +138,10 @@ class MyApp(App):
         t = ''
         self.text_label = Label(
             text=t,
-            font_size=50,
+            font_size=FONT_SIZE,
             size_hint_y=None,
-            size=(Window.width, 50 * get_lines_of_str(t) * 1.3)
+            size=(Window.width, FONT_SIZE * get_lines_of_str(t) * 1.3),
+            bold=True
         )
         self.sv.add_widget(self.text_label)
 
@@ -152,7 +157,7 @@ class MyApp(App):
                 text = get_songtext(current_song_name)
 
                 self.text_label.text = text
-                self.text_label.size = (Window.width, 50 * get_lines_of_str(text) * 1.5)
+                self.text_label.size = (Window.width, FONT_SIZE * get_lines_of_str(text) * 1.5)
 
                 # Reset scroll to the song progres
                 # This is 1.0 at the top and 0.0 at the bottom of the view
@@ -171,7 +176,10 @@ class MyApp(App):
         if self.sv.scroll_y >= 0.0:
             self.sv.scroll_y -= self.scroll_speed
 
-        print(self.sv.scroll_y)
+        # When the fetching doenst work and the defualt text is shown
+        # then downt scroll
+        if self.text_label.text == NO_TEXT:
+            self.sv.scroll_y = 1.0
 
 if __name__ == '__main__':
     Window.size = (1600, 900)
