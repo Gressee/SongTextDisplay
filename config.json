@@ -1,6 +1,8 @@
 {
-    "client_id": "CHNAGE",
+    "client_id": "CHANGE",
     "client_secret": "CHNAGE",
-    "font_size": 50,
-    "time_pad": 30.0
+    "fps": 30,
+    "font_size": 40,
+    "time_pad": 30.0,
+    "no_text": "\n\n\n\n\n\n\n\nWelcome to ProjectX 2.0"
 }

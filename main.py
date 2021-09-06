@@ -13,14 +13,22 @@ from kivy.clock import Clock
 from kivy.uix.label import Label
 from kivy.uix.scrollview import ScrollView
 
-CLIENT_ID = '7873392635534605b0c97f11e4360687'
-CLIENT_SECRET = '83bae44d26f34a7a815e056216b7b5d7'
+# Load config from file
+with open('config.json', 'r') as f:
+    data = json.load(f)
+    CLIENT_ID       = data['client_id']
+    CLIENT_SECRET   = data['client_secret']
+    FPS             = data['fps']
+    FONT_SIZE       = data['font_size']
+    
+    # Time the page reaches the bottom before the song ends
+    TIME_PAD        = data['time_pad']
+    
+    # When no songtext can be found 
+    NO_TEXT     = data['no_text']
+    
+    f.close()
 
-FPS = 30
-
-FONT_SIZE = 40
-
-NO_TEXT = "\n\n\n\n\n\n\n\nWelcome to ProjectX 2.0"
 
 def get_lines_of_str(string: str) -> int:
     try:
@@ -93,9 +101,6 @@ class SpotifyApi:
         while True:
             try:
                 self.current_song = self.api.currently_playing()
-                time.sleep(2)
-                f = open('song.json', 'w')
-                json.dump(self.current_song, f, indent=4)
                 f.close()
             except:
                 print("Can't get song from spotify api")
@@ -163,15 +168,14 @@ class MyApp(App):
                 # This is 1.0 at the top and 0.0 at the bottom of the view
                 self.sv.scroll_y = 1.0 - self.spot_api.get_song_progress()/self.spot_api.get_song_duration()
 
-                # Time that the scroll reches the bottom before the song ends
-                time_pad = 22.0   
                 # Calc the amount to scroll per frame in seconds
-                song_time_left = (self.spot_api.get_song_duration() - self.spot_api.get_song_progress())/1000.0 - time_pad
+                song_time_left = (self.spot_api.get_song_duration() - self.spot_api.get_song_progress())/1000.0 - TIME_PAD
                 frames_left = song_time_left * FPS
                 scroll_perecent_left = 1.0 - self.spot_api.get_song_progress()/self.spot_api.get_song_duration()
                 self.scroll_speed = scroll_perecent_left/frames_left
             except:
                 print("Error while updating for new song")
+        
         # Scroll down with respect to the song progress 
         if self.sv.scroll_y >= 0.0:
             self.sv.scroll_y -= self.scroll_speed
@@ -182,5 +186,6 @@ class MyApp(App):
             self.sv.scroll_y = 1.0
 
 if __name__ == '__main__':
-    Window.size = (1600, 900)
+    Window.size = (1920, 1040)
+    #Window.fullscreen = True
     MyApp().run()
