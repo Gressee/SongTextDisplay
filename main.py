@@ -50,7 +50,7 @@ def prepare_title_for_search(title: str) -> str:
     # remove brakets
     b1 = title.find('(')
     b2 = title.find(')')
-    if not(b1==-1 or b2==-1):
+    if not(b1 == -1 or b2 == -1):
         title = title[:b1] + title[b2+1:]
     
     # Remov everything after feat
